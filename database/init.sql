@@ -176,4 +176,9 @@ INSERT INTO genres (genre_name, description) VALUES
 ('Психология', 'Литература о психологии человека'),
 ('Философия', 'Философские труды');
 
-INSERT INTO publishers (publisher_name, country, city, founded_year) VAL
+INSERT INTO publishers (publisher_name, country, city, founded_year) VALUES
+('АСТ', 'Россия', 'Москва', 1990),
+('Эксмо', 'Россия', 'Москва', 1991),
+('Альпина Паблишер', 'Россия', 'Москва', 1998),
+('Манн, Иванов и Фербер', 'Россия', 'Москва', 2005),
+('Питер', 'Россия', 'Санкт-Петербург', 1991);

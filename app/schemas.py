@@ -1,6 +1,10 @@
 from pydantic import BaseModel, EmailStr, Field, validator
-from typing import Optional, List
+from typing import Optional, List, ForwardRef
 from datetime import date, datetime
+
+# Forward references
+AuthorRef = ForwardRef('Author')
+GenreRef = ForwardRef('Genre')
 
 class PublisherBase(BaseModel):
     publisher_name: str
@@ -37,45 +41,6 @@ class SeriesUpdate(SeriesBase):
 class Series(SeriesBase):
     series_id: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-class BookBase(BaseModel):
-    title: str
-    isbn: Optional[str] = None
-    publisher_id: Optional[int] = None
-    publication_year: Optional[int] = Field(None, ge=1000, le=2100)
-    pages_count: Optional[int] = Field(None, gt=0)
-    language: str = "Русский"
-    description: Optional[str] = None
-    storage_location: Optional[str] = None
-    acquisition_date: Optional[date] = None
-    price: Optional[float] = Field(None, ge=0)
-    condition: Optional[str] = Field(None, pattern="^(новая|хорошее|удовлетворительное)$")
-    format: Optional[str] = Field(None, pattern="^(твердый переплет|мягкая обложка|электронная)$")
-    status: str = Field("в библиотеке", pattern="^(в библиотеке|одолжена|утеряна)$")
-    series_id: Optional[int] = None
-    series_number: Optional[int] = None
-
-class BookCreate(BookBase):
-    author_ids: List[int] = []
-    genre_ids: List[int] = []
-
-class BookUpdate(BookBase):
-    title: Optional[str] = None
-    status: Optional[str] = None
-    author_ids: Optional[List[int]] = None
-    genre_ids: Optional[List[int]] = None
-
-class Book(BookBase):
-    book_id: int
-    created_at: datetime
-    updated_at: datetime
-    avg_rating: Optional[float] = 0
-    review_count: Optional[int] = 0
-    authors: Optional[List['Author']] = []
-    genres: Optional[List['Genre']] = []
 
     class Config:
         from_attributes = True
@@ -124,6 +89,45 @@ class GenreUpdate(GenreBase):
 class Genre(GenreBase):
     genre_id: int
     created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class BookBase(BaseModel):
+    title: str
+    isbn: Optional[str] = None
+    publisher_id: Optional[int] = None
+    publication_year: Optional[int] = Field(None, ge=1000, le=2100)
+    pages_count: Optional[int] = Field(None, gt=0)
+    language: str = "Русский"
+    description: Optional[str] = None
+    storage_location: Optional[str] = None
+    acquisition_date: Optional[date] = None
+    price: Optional[float] = Field(None, ge=0)
+    condition: Optional[str] = Field(None, pattern="^(новая|хорошее|удовлетворительное)$")
+    format: Optional[str] = Field(None, pattern="^(твердый переплет|мягкая обложка|электронная)$")
+    status: str = Field("в библиотеке", pattern="^(в библиотеке|одолжена|утеряна)$")
+    series_id: Optional[int] = None
+    series_number: Optional[int] = None
+
+class BookCreate(BookBase):
+    author_ids: List[int] = []
+    genre_ids: List[int] = []
+
+class BookUpdate(BookBase):
+    title: Optional[str] = None
+    status: Optional[str] = None
+    author_ids: Optional[List[int]] = None
+    genre_ids: Optional[List[int]] = None
+
+class Book(BookBase):
+    book_id: int
+    created_at: datetime
+    updated_at: datetime
+    avg_rating: Optional[float] = 0
+    review_count: Optional[int] = 0
+    authors: Optional[List[Author]] = []
+    genres: Optional[List[Genre]] = []
 
     class Config:
         from_attributes = True
@@ -201,3 +205,6 @@ class BookStatistics(BaseModel):
     top_genres: List[dict]
     top_authors: List[dict]
     reading_progress: List[dict]
+
+# Обновляем forward references
+Book.model_rebuild()
